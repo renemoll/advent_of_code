@@ -1,4 +1,4 @@
-from aocd import get_data
+"""Day 1: Trebuchet?!"""
 
 NAMES = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
 
@@ -16,11 +16,9 @@ def _part1(input_lines):
 
 
 def _strip_line_to_first_last_number(line):
-    while (
-        not any(filter(lambda x: line.startswith(x), NAMES)) and not line[0].isdigit()
-    ):
+    while not any(filter(line.startswith, NAMES)) and not line[0].isdigit():
         line = line[1:]
-    while not any(filter(lambda x: line.endswith(x), NAMES)) and not line[-1].isdigit():
+    while not any(filter(line.endswith, NAMES)) and not line[-1].isdigit():
         line = line[:-1]
     return line
 
