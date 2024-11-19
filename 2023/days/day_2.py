@@ -1,19 +1,20 @@
-from aocd import get_data
+"""Day 2: Cube Conundrum"""
 
 
 def _line_to_game(line):
-    game, draws = line.split(":")
-    id = int(game[4:])
+    game, sets = line.split(":")
+    number = int(game[4:])
 
     result = []
-    for draw in draws.split(";"):
-        dice = draw.split(",")
+    for s in sets.split(";"):
+        cubes = s.split(",")
         r = {"red": 0, "green": 0, "blue": 0}
-        for d in dice:
-            n, c = d.strip().split(" ")
+        for x in cubes:
+            n, c = x.strip().split(" ")
             r[c] = int(n)
         result.append(r)
-    return (id, result)
+
+    return (number, result)
 
 
 def _game_within_limit(game):
@@ -28,7 +29,7 @@ def _part1(input_lines):
     result = 0
     for line in input_lines:
         game = _line_to_game(line)
-        if all([_game_within_limit(x) for x in game[1]]):
+        if all(_game_within_limit(x) for x in game[1]):
             result += game[0]
     return result
 
@@ -37,9 +38,9 @@ def _part2(input_lines):
     result = 0
     for line in input_lines:
         game = _line_to_game(line)
-        r = max([x["red"] for x in game[1]])
-        g = max([x["green"] for x in game[1]])
-        b = max([x["blue"] for x in game[1]])
+        r = max(x["red"] for x in game[1])
+        g = max(x["green"] for x in game[1])
+        b = max(x["blue"] for x in game[1])
         result += r * g * b
     return result
 
