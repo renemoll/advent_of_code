@@ -8,7 +8,7 @@ from aocd import get_data
 
 def main() -> int:
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         format="%(asctime)s - %(filename)s:%(lineno)s - %(levelname)s: %(message)s",
         datefmt="%Y.%m.%d %H:%M:%S",
     )
