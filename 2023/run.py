@@ -72,12 +72,15 @@ if __name__ == "__main__":
     logging.debug("Found the following modules: %s", modules)
 
     for day in modules:
-        day_number = int(day.split("_")[1])
-        data = get_data(day=day_number, year=2023).splitlines()
+        try:
+            day_number = int(day.split("_")[1])
+            data = get_data(day=day_number, year=2023).splitlines()
 
-        module = importlib.import_module(f"days.{day}")
-        with ExecutionTimer() as timer:
-            solution = module.solve(data)
-        print(
-            f"Day {day_number}, part 1: {solution[0]}, part 2: {solution[1]}, time: {timer.duration:.6}s"
-        )
+            module = importlib.import_module(f"days.{day}")
+            with ExecutionTimer() as timer:
+                solution = module.solve(data)
+            print(
+                f"Day {day_number}, part 1: {solution[0]}, part 2: {solution[1]}, time: {timer.duration:.6}s"
+            )
+        except IndexError:
+            continue
