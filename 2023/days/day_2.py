@@ -5,22 +5,22 @@ def _line_to_game(line):
     game, sets = line.split(":")
     number = int(game[4:])
 
-    result = []
+    results = []
     for s in sets.split(";"):
         cubes = s.split(",")
-        r = {"red": 0, "green": 0, "blue": 0}
+        result = {"red": 0, "green": 0, "blue": 0}
         for x in cubes:
-            n, c = x.strip().split(" ")
-            r[c] = int(n)
-        result.append(r)
+            amount, colour = x.strip().split(" ")
+            result[colour] = int(amount)
+        results.append(result)
 
-    return (number, result)
+    return (number, results)
 
 
 def _game_within_limit(game):
     limit = {"red": 12, "green": 13, "blue": 14}
-    for c, v in game.items():
-        if v > limit[c]:
+    for colour, amount in game.items():
+        if amount > limit[colour]:
             return False
     return True
 
