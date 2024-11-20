@@ -55,5 +55,7 @@ if __name__ == "__main__":
     puzzle = Puzzle(year=2023, day=2)
     example = puzzle.examples[0]
     example_input = example.input_data.splitlines()
-    print(f"Part 1: {_part1(example_input)}, expecting: {example.answer_a}")
-    print(f"Part 2: {_part2(example_input)}, expecting: {example.answer_b}")
+
+    solution = solve(example_input)
+    print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")
+    print(f"Part 2: {solution[1]}, expecting: {example.answer_b}")

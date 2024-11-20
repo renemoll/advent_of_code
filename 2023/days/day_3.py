@@ -75,6 +75,6 @@ if __name__ == "__main__":
     example = puzzle.examples[0]
     example_input = example.input_data.splitlines()
 
-    parsed = _parse(example_input)
-    print(f"Part 1: {_part1(parsed)}, expecting: {example.answer_a}")
-    print(f"Part 2: {_part2(parsed)}, expecting: {example.answer_b}")
+    solution = solve(example_input)
+    print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")
+    print(f"Part 2: {solution[1]}, expecting: {example.answer_b}")
