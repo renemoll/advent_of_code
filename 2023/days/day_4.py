@@ -5,22 +5,24 @@ class Card:
     """Represent a scratchcard."""
 
     game_id: int
-    winning_numbers: list
-    your_numbers: list
+    winning_numbers: set[int]
+    your_numbers: set[int]
 
-    def __init__(self, game_id, winning_numbers, your_numbers) -> None:
+    def __init__(
+        self, game_id: int, winning_numbers: set[int], your_numbers: set[int]
+    ) -> None:
         self.id = game_id
         self.winning_numbers = winning_numbers
         self.your_numbers = your_numbers
 
-    def matches(self):
+    def matches(self) -> int:
         return len(self.winning_numbers & self.your_numbers)
 
-    def score(self):
+    def score(self) -> int:
         return 2 ** (self.matches() - 1) if self.matches() > 0 else 0
 
 
-def _parse(input_lines):
+def _parse(input_lines: list[str]) -> list[Card]:
     cards = []
     for line in input_lines:
         game_id = int(line.split(":")[0].split()[1])
@@ -32,11 +34,11 @@ def _parse(input_lines):
     return cards
 
 
-def _part1(parsed_data):
+def _part1(parsed_data: list[Card]) -> int:
     return sum(card.score() for card in parsed_data)
 
 
-def _part2(parsed_data):
+def _part2(parsed_data: list[Card]) -> int:
     count = {card.id: 1 for card in parsed_data}
     for card in parsed_data:
         for i in range(card.id + 1, card.id + 1 + card.matches()):
@@ -45,7 +47,7 @@ def _part2(parsed_data):
     return sum(count.values())
 
 
-def solve(input_lines):
+def solve(input_lines: list[str]) -> tuple[int, int]:
     parsed_input = _parse(input_lines)
     return (_part1(parsed_input), _part2(parsed_input))
 
