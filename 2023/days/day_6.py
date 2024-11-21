@@ -1,5 +1,7 @@
 """Day 6: Wait For It"""
 
+import math
+
 
 class Race:
     """Represents race data."""
@@ -37,7 +39,7 @@ def _part1(parsed_data: list[Race]) -> int:
 def _part2(parsed_data: list[Race]) -> int:
     time = int("".join([str(race.time) for race in parsed_data]))
     distance = int("".join([str(race.distance) for race in parsed_data]))
-    return _calculate_number_of_winning_options(time, distance)
+    return round(math.sqrt(time**2 - 4 * distance))
 
 
 def solve(input_lines: list[str]) -> tuple[int, int]:
