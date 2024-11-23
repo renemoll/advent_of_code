@@ -16,6 +16,13 @@ class Race:
     def __repr__(self) -> str:
         return f"<Race: time: {self.time}, distance: {self.distance}>"
 
+    def calculate_number_of_winning_options_naive(self) -> int:
+        wins = filter(
+            lambda x: x > self.distance,
+            map(lambda x: (self.time - x) * x, range(1, self.time)),
+        )
+        return len(list(wins))
+
 
 def _parse(input_lines: list[str]) -> list[Race]:
     time, distance = [map(int, line.split(":")[1].split()) for line in input_lines]
@@ -23,22 +30,20 @@ def _parse(input_lines: list[str]) -> list[Race]:
     return [Race(*x) for x in races]
 
 
-def _calculate_number_of_winning_options(time: int, distance: int) -> int:
-    wins = filter(lambda x: x > distance, map(lambda x: (time - x) * x, range(1, time)))
-    return len(list(wins))
-
-
 def _part1(parsed_data: list[Race]) -> int:
     result = 1
     for race in parsed_data:
-        result *= _calculate_number_of_winning_options(race.time, race.distance)
-
+        result *= race.calculate_number_of_winning_options_naive()
     return result
 
 
 def _part2(parsed_data: list[Race]) -> int:
     time = int("".join([str(race.time) for race in parsed_data]))
     distance = int("".join([str(race.distance) for race in parsed_data]))
+
+    #
+    # The following is the quadratic formula, reduced to take the distance between the two roots
+    #
     return round(math.sqrt(time**2 - 4 * distance))
 
 
