@@ -1,10 +1,10 @@
 """Day 3: Gear Ratios"""
 
-from .utilities import Grid, Coordinate
+from .utilities import Matrix, Coordinate
 
 
 def _parse(input_lines):
-    indices = Grid(input_lines)
+    indices = Matrix(input_lines)
     numbers = []
     symbols = []
 
