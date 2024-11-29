@@ -1,5 +1,11 @@
 """Generic helpers"""
 
+import itertools
+
+
+def list_1d_to_2d(data, columns):
+    return [data[i : i + columns] for i in range(0, len(data), columns)]
+
 
 class Coordinate:
     """Represent a single point within a 2D space."""
@@ -11,8 +17,23 @@ class Coordinate:
         self.x = x
         self.y = y
 
+    def __hash__(self):
+        return hash((self.x, self.y))
+
     def __repr__(self) -> str:
         return f"<Coordinate x: {self.x}, y:{self.y}>"
+
+    def __add__(self, other):
+        return Coordinate(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        return Coordinate(self.x - other.x, self.y - other.y)
+
+    def __eq__(self, other) -> bool:
+        return self.x == other.x and self.y == other.y
+
+    def __lt__(self, other) -> bool:
+        return (self.x, self.y) < (other.x, other.y)
 
     def neighbours(self):
         deltas = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
@@ -20,28 +41,51 @@ class Coordinate:
             yield Coordinate(self.x + delta[0], self.y + delta[1])
 
 
-class Grid:
-    """Represent a 2D grid."""
+class Matrix:
+    """Represent a 2D matrix.
+
+    Improvements:
+    * _data as a 2d list to avoid index calculation?
+    * factory functions to create the matrix (from string, from custom type)
+    """
 
     def __init__(self, data):
         if isinstance(data[0], str):
             self._data = [list(x) for x in data]
-        else:
-            self._data = data
+        self._data = list(itertools.chain.from_iterable(data))
+        self.rows = len(data)
+        self.columns = len(data[0])
+
+    def __iter__(self):
+        return iter(self._data)
 
     def __repr__(self) -> str:
-        return f"<Grid rows: {len(self._data)}, columns: {len(self._data[0])}>"
+        return f"<Matrix rows: {self.rows}, columns: {self.columns}>"
 
     def __str__(self) -> str:
-        return "\n".join("".join(map(str, row)) for row in self._data)
+        return "\n".join(
+            " ".join(map(str, row)) for row in list_1d_to_2d(self._data, self.columns)
+        )
 
-    def all_coordinates(self):
-        for r, line in enumerate(self._data):
-            for c, _ in enumerate(line):
-                yield Coordinate(r, c)
+    # def all_coordinates(self):
+    #     for r, line in enumerate(self._data):
+    #         for c, _ in enumerate(line):
+    #             yield Coordinate(r, c)
 
     def set(self, coordinate, value):
-        self._data[coordinate.x][coordinate.y] = value
+        index = coordinate.x * self.columns + coordinate.y
+        self._data[index] = value
 
     def get(self, coordinate):
-        return self._data[coordinate.x][coordinate.y]
+        index = coordinate.x * self.columns + coordinate.y
+        return self._data[index]
+
+    def find(self, needle) -> Coordinate:
+        index = self._data.index(needle)
+        x = index // self.columns
+        y = index % self.columns
+        return Coordinate(x, y)
+
+    def find_all(self, needle) -> list[Coordinate]:
+        indices = [i for i, x in enumerate(self._data) if x == needle]
+        return [Coordinate(i // self.columns, i % self.columns) for i in indices]
