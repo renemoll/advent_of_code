@@ -3,26 +3,25 @@
 import collections
 
 
-def _parse(input_lines: list[str]):
+def _parse(input_lines: list[str]) -> tuple[list[int], list[int]]:
     left = []
     right = []
     for line in input_lines:
         l, r = line.split()
-        left.append(l)
-        right.append(r)
-    left = list(map(int, left))
+        left.append(int(l))
+        right.append(int(r))
+
     left.sort()
-    right = list(map(int, right))
     right.sort()
-    return left, right
+    return (left, right)
 
 
-def _part1(parsed_input) -> int:
+def _part1(parsed_input: tuple[list[int], list[int]]) -> int:
     left, right = parsed_input
     return sum(map(lambda x: abs(x[0] - x[1]), zip(left, right)))
 
 
-def _part2(parsed_input) -> int:
+def _part2(parsed_input: tuple[list[int], list[int]]) -> int:
     left, right = parsed_input
     left_count = collections.Counter(left)
     right_count = collections.Counter(right)
