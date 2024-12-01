@@ -7,6 +7,11 @@ def list_1d_to_2d(data, columns):
     return [data[i : i + columns] for i in range(0, len(data), columns)]
 
 
+def pairwise_without_overlap(iterable):
+    a = iter(iterable)
+    return zip(a, a)
+
+
 class Coordinate:
     """Represent a single point within a 2D space."""
 

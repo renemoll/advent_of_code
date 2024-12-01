@@ -1,5 +1,7 @@
 """Day 5: If You Give A Seed A Fertilizer"""
 
+from .utilities import pairwise_without_overlap
+
 
 class Rule:
     """Represents a translation rule."""
@@ -108,13 +110,9 @@ def _part1(parsed_data: tuple[list[int], list[CategoryMap]]) -> int:
 
 
 def _part2(parsed_data: tuple[list[int], list[CategoryMap]]) -> int:
-    def pairwise(iterable):
-        a = iter(iterable)
-        return zip(a, a)
-
     seeds, maps = parsed_data
     locations = []
-    for start, length in pairwise(seeds):
+    for start, length in pairwise_without_overlap(seeds):
         seed_range = range(start, start + length)
         seed_ranges = [seed_range]
         for mapping in maps:
