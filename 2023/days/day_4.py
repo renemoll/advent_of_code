@@ -22,9 +22,9 @@ class Card:
         return 2 ** (self.matches() - 1) if self.matches() > 0 else 0
 
 
-def _parse(input_lines: list[str]) -> list[Card]:
+def _parse(input_data: str) -> list[Card]:
     cards = []
-    for line in input_lines:
+    for line in input_data.splitlines():
         game_id = int(line.split(":")[0].split()[1])
         lists = line.split(":")[-1].split("|")
         winning_numbers = set(map(int, lists[0].split()))
@@ -47,8 +47,8 @@ def _part2(parsed_data: list[Card]) -> int:
     return sum(count.values())
 
 
-def solve(input_lines: list[str]) -> tuple[int, int]:
-    parsed_input = _parse(input_lines)
+def solve(input_data: str) -> tuple[int, int]:
+    parsed_input = _parse(input_data)
     return (_part1(parsed_input), _part2(parsed_input))
 
 
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2023, day=4)
     example = puzzle.examples[0]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
 
     solution = solve(example_input)
     print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")

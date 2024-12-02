@@ -24,8 +24,10 @@ class Race:
         return len(list(wins))
 
 
-def _parse(input_lines: list[str]) -> list[Race]:
-    time, distance = [map(int, line.split(":")[1].split()) for line in input_lines]
+def _parse(input_data: str) -> list[Race]:
+    time, distance = [
+        map(int, line.split(":")[1].split()) for line in input_data.splitlines()
+    ]
     races = zip(time, distance)
     return [Race(*x) for x in races]
 
@@ -47,8 +49,8 @@ def _part2(parsed_data: list[Race]) -> int:
     return round(math.sqrt(time**2 - 4 * distance))
 
 
-def solve(input_lines: list[str]) -> tuple[int, int]:
-    parsed_input = _parse(input_lines)
+def solve(input_data: str) -> tuple[int, int]:
+    parsed_input = _parse(input_data)
     return (_part1(parsed_input), _part2(parsed_input))
 
 
@@ -57,7 +59,7 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2023, day=6)
     example = puzzle.examples[0]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
 
     solution = solve(example_input)
     print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")

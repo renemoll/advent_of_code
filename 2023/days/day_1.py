@@ -3,46 +3,31 @@
 NAMES = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
 
 
-def _extract_numbers_from_line(line):
+def extract_numbers_from_line(line: str) -> int:
     numbers = [x for x in line if x.isdigit()]
     return int(numbers[0] + numbers[-1])
 
 
-def _part1(input_lines):
+def _part1(input_data: str) -> int:
+    return sum(extract_numbers_from_line(line) for line in input_data.splitlines())
+
+
+def _part2(input_data: str) -> int:
     result = 0
-    for line in input_lines:
-        result += _extract_numbers_from_line(line)
+    for line in input_data.splitlines():
+        xs = []
+        for i, c in enumerate(line):
+            if c.isdigit():
+                xs.append(c)
+            for j, number in enumerate(NAMES):
+                if line[i:].startswith(number):
+                    xs.append(str(j + 1))
+        result += int(xs[0] + xs[-1])
     return result
 
 
-def _strip_line_to_first_last_number(line):
-    while not any(filter(line.startswith, NAMES)) and not line[0].isdigit():
-        line = line[1:]
-    while not any(filter(line.endswith, NAMES)) and not line[-1].isdigit():
-        line = line[:-1]
-    return line
-
-
-def _replace_textual_with_digits(line):
-    for i, name in enumerate(NAMES):
-        if line.startswith(name) and not line[0].isdigit():
-            line = line.replace(name, str(i + 1), 1)
-        if line.endswith(name) and not line[-1].isdigit():
-            line = (str(i + 1)).join(line.rsplit(name, 1))
-    return line
-
-
-def _part2(input_lines):
-    result = 0
-    for line in input_lines:
-        line = _strip_line_to_first_last_number(line)
-        line = _replace_textual_with_digits(line)
-        result += _extract_numbers_from_line(line)
-    return result
-
-
-def solve(input_lines):
-    return (_part1(input_lines), _part2(input_lines))
+def solve(input_data: str) -> tuple[int, int]:
+    return (_part1(input_data), _part2(input_data))
 
 
 if __name__ == "__main__":
@@ -50,9 +35,9 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2023, day=1)
     example = puzzle.examples[0]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
     print(f"Part 1: {_part1(example_input)}, expecting: {example.answer_a}")
 
     example = puzzle.examples[1]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
     print(f"Part 2: {_part2(example_input)}, expecting: {example.answer_b}")

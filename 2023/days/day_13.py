@@ -3,8 +3,8 @@
 import itertools
 
 
-def _parse(input_lines: list[str]):
-    patterns = "\n".join(input_lines).split("\n\n")
+def _parse(input_data: str):
+    patterns = input_data.split("\n\n")
     return [p.splitlines() for p in patterns]
 
 
@@ -58,8 +58,8 @@ def _part2(parsed_input) -> int:
     return result
 
 
-def solve(input_lines: list[str]) -> tuple[int, int]:
-    parsed_input = _parse(input_lines)
+def solve(input_data: str) -> tuple[int, int]:
+    parsed_input = _parse(input_data)
     return (_part1(parsed_input), _part2(parsed_input))
 
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2023, day=13)
     example = puzzle.examples[0]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
 
     solution = solve(example_input)
     print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")
