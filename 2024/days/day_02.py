@@ -1,28 +1,26 @@
-"""Day 1: Historian Hysteria"""
+"""Day 2: Red-Nosed Reports"""
 
 import math
-from .utilities import diff
+from .utilities import diff, parse_ints
 
 
-def _parse(input_lines: list[str]):
-    return [list(map(int, line.split())) for line in input_lines]
-
-
-def report_is_valid(report):
+def report_is_valid(report: list[int]) -> bool:
     dxs = diff(report)
-    signs = [math.copysign(1, x) for x in dxs]
-    if abs(sum(signs)) != len(dxs):
-        return False
-    if all(abs(x) > 0 and abs(x) < 4 for x in dxs):
+    signs = map(lambda x: math.copysign(1, x), dxs)
+    if abs(sum(signs)) == len(dxs) and all(0 < abs(x) < 4 for x in dxs):
         return True
     return False
 
 
-def _part1(parsed_input) -> int:
+def _parse(input_data: str) -> list[list[int]]:
+    return [parse_ints(line) for line in input_data.splitlines()]
+
+
+def _part1(parsed_input: list[list[int]]) -> int:
     return sum(report_is_valid(x) for x in parsed_input)
 
 
-def _part2(parsed_input) -> int:
+def _part2(parsed_input: list[list[int]]) -> int:
     result = 0
     for report in parsed_input:
         if report_is_valid(report):
@@ -37,8 +35,8 @@ def _part2(parsed_input) -> int:
     return result
 
 
-def solve(input_lines: list[str]) -> tuple[int, int]:
-    parsed_input = _parse(input_lines)
+def solve(input_data: str) -> tuple[int, int]:
+    parsed_input = _parse(input_data)
     return (_part1(parsed_input), _part2(parsed_input))
 
 
@@ -47,7 +45,7 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2024, day=2)
     example = puzzle.examples[0]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
 
     solution = solve(example_input)
     print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")
