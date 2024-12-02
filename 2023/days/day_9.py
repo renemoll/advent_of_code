@@ -25,8 +25,8 @@ class Sequence:
         return not any(x > 0 or x < 0 for x in self.values)
 
 
-def _parse(input_lines: list[str]) -> list:
-    return [Sequence(list(map(int, line.split()))) for line in input_lines]
+def _parse(input_data: str) -> list:
+    return [Sequence(list(map(int, line.split()))) for line in input_data.splitlines()]
 
 
 def _process_forwards(sequence: Sequence) -> int:
@@ -53,8 +53,8 @@ def _part2(parsed_data: list) -> int:
     return sum(_process_backwards(sequence) for sequence in parsed_data)
 
 
-def solve(input_lines: list[str]) -> tuple[int, int]:
-    parsed_input = _parse(input_lines)
+def solve(input_data: str) -> tuple[int, int]:
+    parsed_input = _parse(input_data)
     return (_part1(parsed_input), _part2(parsed_input))
 
 
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2023, day=9)
     example = puzzle.examples[0]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
 
     solution = solve(example_input)
     print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")

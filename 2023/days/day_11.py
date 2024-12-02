@@ -3,12 +3,12 @@
 from .utilities import Matrix, Coordinate
 
 
-def _parse(input_lines: list[str]) -> tuple[Matrix, list[Coordinate]]:
+def _parse(input_data: str) -> tuple[Matrix, list[Coordinate]]:
     """
     Todo:
     - remove galaxy_map
     """
-    galaxy_map = Matrix(input_lines)
+    galaxy_map = Matrix(input_data.splitlines())
     galaxies = galaxy_map.find_all("#")
 
     return (galaxy_map, galaxies)
@@ -74,8 +74,8 @@ def _part2(parsed_input: tuple[Matrix, list[Coordinate]]) -> int:
     return length
 
 
-def solve(input_lines: list[str]) -> tuple[int, int]:
-    parsed_input = _parse(input_lines)
+def solve(input_data: str) -> tuple[int, int]:
+    parsed_input = _parse(input_data)
     return (_part1(parsed_input), _part2(parsed_input))
 
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2023, day=11)
     example = puzzle.examples[0]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
 
     solution = solve(example_input)
     print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")

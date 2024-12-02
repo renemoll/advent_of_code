@@ -71,16 +71,21 @@ if __name__ == "__main__":
     modules = [name for _, name, _ in pkgutil.iter_modules([str(tasks_path)])]
     logging.debug("Found the following modules: %s", modules)
 
+    execution_times = []
     for day in modules:
         try:
             day_number = int(day.split("_")[1])
-            data = get_data(day=day_number, year=2023).splitlines()
+            data = get_data(day=day_number, year=2023)
 
             module = importlib.import_module(f"days.{day}")
             with ExecutionTimer() as timer:
                 solution = module.solve(data)
+            execution_times.append(timer.duration)
             print(
                 f"Day {day_number}, part 1: {solution[0]}, part 2: {solution[1]}, time: {timer.duration:.6}s"
             )
         except IndexError:
             continue
+    print(
+        f"Total execution time: {sum(execution_times):.6}, min: {min(execution_times):.6}, max: {max(execution_times):.6}"
+    )

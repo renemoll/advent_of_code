@@ -80,9 +80,8 @@ class CategoryMap:
         return results + new_ranges
 
 
-def _parse(input_lines: list[str]) -> tuple[list[int], list[CategoryMap]]:
-    input_lines = "\n".join(input_lines)
-    sections = input_lines.split("\n\n")
+def _parse(input_data: str) -> tuple[list[int], list[CategoryMap]]:
+    sections = input_data.split("\n\n")
     seeds = list(map(int, sections[0].split(": ")[1].split()))
 
     maps = []
@@ -121,8 +120,8 @@ def _part2(parsed_data: tuple[list[int], list[CategoryMap]]) -> int:
     return min(locations)
 
 
-def solve(input_lines: list[str]) -> tuple[int, int]:
-    parsed_input = _parse(input_lines)
+def solve(input_data: str) -> tuple[int, int]:
+    parsed_input = _parse(input_data)
     return (_part1(parsed_input), _part2(parsed_input))
 
 
@@ -131,7 +130,7 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2023, day=5)
     example = puzzle.examples[0]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
 
     solution = solve(example_input)
     print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")

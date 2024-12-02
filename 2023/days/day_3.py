@@ -3,12 +3,12 @@
 from .utilities import Matrix, Coordinate
 
 
-def _parse(input_lines):
-    indices = Matrix(input_lines)
+def _parse(input_data: str) -> tuple[Matrix, list[int], list[tuple[Coordinate, str]]]:
+    indices = Matrix(input_data.splitlines())
     numbers = []
     symbols = []
 
-    for r, line in enumerate(input_lines):
+    for r, line in enumerate(input_data.splitlines()):
         number = 0
         for c, char in enumerate(line):
             if char.isdigit():
@@ -28,7 +28,7 @@ def _parse(input_lines):
     return (indices, numbers, symbols)
 
 
-def _part1(parsed_data):
+def _part1(parsed_data: tuple[Matrix, list[int], list[tuple[Coordinate, str]]]) -> int:
     indices, numbers, symbols = parsed_data
     result = 0
     for coordinate, _ in symbols:
@@ -42,7 +42,7 @@ def _part1(parsed_data):
     return result
 
 
-def _part2(parsed_data):
+def _part2(parsed_data: tuple[Matrix, list[int], list[tuple[Coordinate, str]]]) -> int:
     indices, numbers, symbols = parsed_data
     result = 0
     for coordinate, symbol in symbols:
@@ -63,8 +63,8 @@ def _part2(parsed_data):
     return result
 
 
-def solve(input_lines):
-    parsed_input = _parse(input_lines)
+def solve(input_data: str) -> tuple[int, int]:
+    parsed_input = _parse(input_data)
     return (_part1(parsed_input), _part2(parsed_input))
 
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2023, day=3)
     example = puzzle.examples[0]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
 
     solution = solve(example_input)
     print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")

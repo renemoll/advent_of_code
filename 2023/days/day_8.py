@@ -3,7 +3,8 @@
 import math
 
 
-def _parse(input_lines: list[str]) -> list[dict[str, tuple[str, str]]]:
+def _parse(input_data: str) -> list[dict[str, tuple[str, str]]]:
+    input_lines = input_data.splitlines()
     directions = input_lines[0]
 
     nodes = {}
@@ -63,8 +64,8 @@ def _part2(parsed_data: list[dict[str, tuple[str, str]]]) -> int:
     return result
 
 
-def solve(input_lines: list[str]) -> tuple[int, int]:
-    parsed_input = _parse(input_lines)
+def solve(input_data: str) -> tuple[int, int]:
+    parsed_input = _parse(input_data)
     return (_part1(parsed_input), _part2(parsed_input))
 
 
@@ -73,7 +74,7 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2023, day=8)
     example = puzzle.examples[0]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
 
     solution = solve(example_input)
     print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")

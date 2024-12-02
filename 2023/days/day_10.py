@@ -62,8 +62,8 @@ class PipeMaze(Matrix):
         self.start = self.find(Pipe.Start)
 
 
-def _parse(input_lines: list[str]) -> tuple[PipeMaze, Matrix]:
-    pipes = PipeMaze(input_lines)
+def _parse(input_data: str) -> tuple[PipeMaze, Matrix]:
+    pipes = PipeMaze(input_data.splitlines())
     directions = Matrix(
         list_1d_to_2d([Pipe.directions(pipe) for pipe in pipes], pipes.columns)
     )
@@ -114,8 +114,8 @@ def _part2(parsed_input: tuple[PipeMaze, Matrix]) -> int:
     return enclosed
 
 
-def solve(input_lines: list[str]) -> tuple[int, int]:
-    parsed_input = _parse(input_lines)
+def solve(input_data: str) -> tuple[int, int]:
+    parsed_input = _parse(input_data)
     return (_part1(parsed_input), _part2(parsed_input))
 
 
@@ -124,7 +124,7 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2023, day=10)
     example = puzzle.examples[4]
-    example_input = example.input_data.splitlines()
+    example_input = example.input_data
 
     solution = solve(example_input)
     print(f"Part 1: {solution[0]}, expecting: {example.answer_a}")
