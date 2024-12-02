@@ -3,7 +3,13 @@
 import itertools
 
 
+def diff(xs: list) -> list:
+    """TODO: Generator?"""
+    return [b - a for a, b in itertools.pairwise(xs)]
+
+
 def list_1d_to_2d(data, columns):
+    """TODO: Generator?"""
     return [data[i : i + columns] for i in range(0, len(data), columns)]
 
 
@@ -87,5 +93,6 @@ class Matrix:
         return Coordinate(x, y)
 
     def find_all(self, needle) -> list[Coordinate]:
+        """TODO: Generator?"""
         indices = [i for i, x in enumerate(self._data) if x == needle]
         return [Coordinate(i // self.columns, i % self.columns) for i in indices]
