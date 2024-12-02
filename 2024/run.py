@@ -74,7 +74,7 @@ if __name__ == "__main__":
     for day in modules:
         try:
             day_number = int(day.split("_")[1])
-            data = get_data(day=day_number, year=2024).splitlines()
+            data = get_data(day=day_number, year=2024)
 
             module = importlib.import_module(f"days.{day}")
             with ExecutionTimer() as timer:
