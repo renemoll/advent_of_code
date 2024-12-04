@@ -44,6 +44,16 @@ class Coordinate:
     def __sub__(self, other: "Coordinate") -> "Coordinate":
         return Coordinate(self.x - other.x, self.y - other.y)
 
+    def __mul__(self, other):
+        if isinstance(other, int):
+            return Coordinate(self.x * other, self.y * other)
+        raise TypeError
+
+    def __rmul__(self, other):
+        if isinstance(other, int):
+            return Coordinate(self.x * other, self.y * other)
+        raise TypeError
+
     def __eq__(self, other: "Coordinate") -> bool:
         return self.x == other.x and self.y == other.y
 
