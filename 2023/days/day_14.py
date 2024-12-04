@@ -1,16 +1,32 @@
 """Day 14: Parabolic Reflector Dish"""
 
+import collections
 import pprint
 
 
+def transpose_2d_list(l):
+    return list(map(list, zip(*l)))
+
+
 def _parse(input_data: str):
-    pprint.pprint(input_data)
-    return []
+    transposed = transpose_2d_list(input_data.splitlines())
+    return transposed
 
 
 def _part1(parsed_input) -> int:
-    pprint.pprint(parsed_input)
-    return 0
+    result = 0
+    max_score = len(parsed_input[0])
+    for column in parsed_input:
+        sections = "".join(column).split("#")
+        offset = 0
+        for section in sections:
+            count = collections.Counter(section)
+            if "O" in count:
+                base = max_score - offset
+                result += sum(range(base, base - count["O"], -1))
+            offset += len(section) + 1
+
+    return result
 
 
 def _part2(parsed_input) -> int:
