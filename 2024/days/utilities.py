@@ -100,3 +100,15 @@ class Matrix:
         indices = [i for i, x in enumerate(self._data) if x == needle]
         for i in indices:
             yield Coordinate(i // self.columns, i % self.columns)
+
+    def neighbours(
+        self, coordinate: Coordinate
+    ) -> typing.Generator[Coordinate, None, None]:
+        deltas = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        for delta in deltas:
+            x = coordinate.x + delta[0]
+            y = coordinate.y + delta[1]
+            if 0 <= x < self.rows and 0 <= y < self.columns:
+                yield Coordinate(x, y)
+            else:
+                continue
