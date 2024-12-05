@@ -15,27 +15,11 @@ def _parse(input_data: str):
     return (rule_map, updates)
 
 
-def _part1(parsed_input) -> int:
-    rules, updates = parsed_input
+def solve(input_data: str) -> tuple[int, int]:
+    rules, updates = _parse(input_data)
 
-    result = 0
-    for update in updates:
-        valid = True
-        for i, page in enumerate(update):
-            for remainder in update[i:]:
-                if remainder in rules and page in rules[remainder]:
-                    valid = False
-                    break
-        if valid:
-            result += update[len(update) // 2]
-
-    return result
-
-
-def _part2(parsed_input) -> int:
-    rules, updates = parsed_input
-
-    result = 0
+    part1 = 0
+    part2 = 0
     for update in updates:
         valid = True
         for i, _ in enumerate(update):
@@ -44,15 +28,12 @@ def _part2(parsed_input) -> int:
                     valid = False
                     update[i + j], update[i] = update[i], update[i + j]
 
-        if not valid:
-            result += update[len(update) // 2]
+        if valid:
+            part1 += update[len(update) // 2]
+        else:
+            part2 += update[len(update) // 2]
 
-    return result
-
-
-def solve(input_data: str) -> tuple[int, int]:
-    parsed_input = _parse(input_data)
-    return (_part1(parsed_input), _part2(parsed_input))
+    return part1, part2
 
 
 if __name__ == "__main__":
