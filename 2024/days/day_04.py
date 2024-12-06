@@ -1,13 +1,13 @@
 """Day 4: Ceres Search"""
 
-from .utilities import Matrix, Coordinate
+from .utilities import Grid, Coordinate
 
 
 def _parse(input_data: str):
-    return Matrix(input_data.splitlines())
+    return Grid(input_data.splitlines())
 
 
-def _part1(grid: Matrix) -> int:
+def _part1(grid: Grid) -> int:
     result = 0
     for x in grid.find_all("X"):
         for option in grid.neighbours(x):
@@ -24,7 +24,7 @@ def _part1(grid: Matrix) -> int:
     return result
 
 
-def _part2(grid: Matrix) -> int:
+def _part2(grid: Grid) -> int:
     result = 0
 
     for pos in grid.find_all("A"):
