@@ -66,8 +66,8 @@ class Coordinate:
             yield Coordinate(self.x + delta[0], self.y + delta[1])
 
 
-class Matrix:
-    """Represent a 2D matrix.
+class Grid:
+    """Represent a 2D grid.
 
     Improvements:
     * _data as a 2d list to avoid index calculation?
@@ -122,3 +122,29 @@ class Matrix:
                 yield Coordinate(x, y)
             else:
                 continue
+
+
+class SparseGrid:
+    """A spare grid representation, only storing specific values and their coordinates."""
+
+    def __init__(self, data, predicate=lambda x: True):
+        """TODO: datatype of self._data"""
+        self._data = {}
+        for r, row in enumerate(data):
+            for c, ch in enumerate(row):
+                if predicate(ch):
+                    self._data[Coordinate(c, r)] = ch
+        self.rows = len(data)
+        self.columns = len(data[0])
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def keys(self):
+        return set(self._data.keys())
+
+    def find(self, needle) -> Coordinate:
+        for c, v in self._data.items():
+            if v == needle:
+                return c
+        raise IndexError
