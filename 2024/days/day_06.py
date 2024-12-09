@@ -13,6 +13,14 @@ def rotate(c: Coordinate):
     return directions[(directions.index(c) + 1) % len(directions)]
 
 
+DIRECTIONS = [
+    Coordinate(0, -1),
+    Coordinate(1, 0),
+    Coordinate(0, 1),
+    Coordinate(-1, 0),
+]
+
+
 def position_on_grid(grid: SparseGrid, position: Coordinate):
     return 0 <= position.x < grid.columns and 0 <= position.y < grid.rows
 
@@ -26,19 +34,20 @@ def _parse(input_data: str):
 def _part1(parsed_input) -> int:
     grid, start = parsed_input
 
-    direction = Coordinate(0, -1)
+    direction_index = 0
     guard_position = start
-    seen = [start]
+    seen = set([start])
+    obstacle_positions = grid.keys()
     while True:
-        new_position = guard_position + direction
-        if new_position in grid.keys():
-            direction = rotate(direction)
+        new_position = guard_position + DIRECTIONS[direction_index]
+        if new_position in obstacle_positions:
+            direction_index = (direction_index + 1) % 4
             continue
 
         if position_on_grid(grid, new_position):
             guard_position = new_position
             if not guard_position in seen:
-                seen.append(guard_position)
+                seen.add(guard_position)
         else:
             break
 
@@ -48,35 +57,40 @@ def _part1(parsed_input) -> int:
 def _part2(parsed_input) -> int:
     grid, start = parsed_input
 
-    direction = Coordinate(0, -1)
+    direction_index = 0
     guard_position = start
-    seen = set((start, direction))
+    seen = set((start, direction_index))
+    obstacle_positions = grid.keys()
     options = []
     while True:
-        new_position = guard_position + direction
-        if new_position in grid.keys():
-            direction = rotate(direction)
+        new_position = guard_position + DIRECTIONS[direction_index]
+        if new_position in obstacle_positions:
+            direction_index = (direction_index + 1) % 4
             continue
 
         if position_on_grid(grid, new_position):
-            looking_at = new_position + rotate(direction)
-            while position_on_grid(grid, looking_at):
-                if (looking_at, rotate(direction)) in seen:
-                    options.append(looking_at)
+            peek_direction_index = (direction_index + 1) % 4
+            peek = new_position + DIRECTIONS[peek_direction_index]
+            while position_on_grid(grid, peek):
+                if (peek, peek_direction_index) in seen:
+                    options.append(peek)
                     break
                 if (
-                    looking_at in grid.keys()
-                    and (looking_at - rotate(direction), rotate(rotate(direction)))
+                    peek in obstacle_positions
+                    and (
+                        peek - DIRECTIONS[peek_direction_index],
+                        ((direction_index + 2) % 4),
+                    )
                     in seen
                 ):
-                    options.append(looking_at)
+                    options.append(peek)
                     break
 
-                looking_at += rotate(direction)
+                peek += DIRECTIONS[peek_direction_index]
 
             guard_position = new_position
-            if not (guard_position, direction) in seen:
-                seen.add((guard_position, direction))
+            if not (guard_position, direction_index) in seen:
+                seen.add((guard_position, direction_index))
         else:
             break
 
