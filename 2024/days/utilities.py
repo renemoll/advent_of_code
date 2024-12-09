@@ -55,7 +55,10 @@ class Coordinate:
         raise TypeError
 
     def __eq__(self, other: "Coordinate") -> bool:
-        return self.x == other.x and self.y == other.y
+        try:
+            return self.x == other.x and self.y == other.y
+        except AttributeError:
+            return self.x == other[0] and self.y == other[1]
 
     def __lt__(self, other: "Coordinate") -> bool:
         return (self.x, self.y) < (other.x, other.y)
