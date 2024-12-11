@@ -3,16 +3,6 @@
 from .utilities import SparseGrid, Coordinate
 
 
-def rotate(c: Coordinate):
-    directions = [
-        Coordinate(0, -1),
-        Coordinate(1, 0),
-        Coordinate(0, 1),
-        Coordinate(-1, 0),
-    ]
-    return directions[(directions.index(c) + 1) % len(directions)]
-
-
 DIRECTIONS = [
     Coordinate(0, -1),
     Coordinate(1, 0),
@@ -25,13 +15,13 @@ def position_on_grid(grid: SparseGrid, position: Coordinate):
     return 0 <= position.x < grid.columns and 0 <= position.y < grid.rows
 
 
-def _parse(input_data: str):
+def _parse(input_data: str) -> tuple[SparseGrid, Coordinate]:
     obstacles = SparseGrid(input_data.splitlines(), lambda x: x == "#")
     start = SparseGrid(input_data.splitlines(), lambda x: x == "^").find("^")
     return obstacles, start
 
 
-def _part1(parsed_input) -> int:
+def _part1(parsed_input: tuple[SparseGrid, Coordinate]) -> int:
     grid, start = parsed_input
 
     direction_index = 0
@@ -54,7 +44,7 @@ def _part1(parsed_input) -> int:
     return len(seen)
 
 
-def _part2(parsed_input) -> int:
+def _part2(parsed_input: tuple[SparseGrid, Coordinate]) -> int:
     grid, start = parsed_input
 
     direction_index = 0

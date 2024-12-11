@@ -4,11 +4,11 @@
 from .utilities import parse_ints
 
 
-def _parse(input_data: str):
+def _parse(input_data: str) -> list[list[int]]:
     return [parse_ints(x) for x in input_data.splitlines()]
 
 
-def _part1(parsed_input) -> int:
+def _part1(parsed_input: list[list[int]]) -> int:
     result = 0
     for equation in parsed_input:
         lhs = equation[0]
@@ -28,7 +28,7 @@ def _part1(parsed_input) -> int:
     return result
 
 
-def _part2(parsed_input) -> int:
+def _part2(parsed_input: list[list[int]]) -> int:
     result = 0
     for equation in parsed_input:
         lhs = equation[0]
