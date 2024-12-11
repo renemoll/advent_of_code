@@ -5,6 +5,10 @@ import re
 import typing
 
 
+def clamp(n: float, smallest: float, largest: float) -> float:
+    return max(smallest, min(n, largest))
+
+
 def diff(xs: list) -> list:
     return [b - a for a, b in itertools.pairwise(xs)]
 
@@ -146,8 +150,16 @@ class SparseGrid:
     def keys(self):
         return set(self._data.keys())
 
+    def values(self):
+        return self._data.values()
+
     def find(self, needle) -> Coordinate:
         for c, v in self._data.items():
             if v == needle:
                 return c
         raise IndexError
+
+    def find_all(self, needle) -> typing.Generator["Coordinate", None, None]:
+        for c, value in self._data.items():
+            if value == needle:
+                yield c
