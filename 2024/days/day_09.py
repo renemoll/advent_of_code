@@ -1,70 +1,164 @@
 """Day 9: Disk Fragmenter"""
 
-import pprint
+import enum
+import typing
+import collections
+import copy
 
 
 def is_even(n):
     return n % 2 == 0
 
 
+class SectionType(enum.Enum):
+    """Section type"""
+
+    FILE = 1
+    SPACE = 2
+
+
+class Section:
+    """Represents a section (span) of disk space"""
+
+    def __init__(
+        self, size: int, section_type: SectionType, file_id: typing.Optional[int] = None
+    ):
+        self.size = size
+        self.type = section_type
+        self.file_id = file_id
+
+    def __repr__(self) -> str:
+        return f"<Section type: {self.type}, size: {self.size}, id: {self.file_id}>"
+
+    def __str__(self) -> str:
+        return self.size * [".", str(self.file_id)][self.type == SectionType.FILE]
+
+
 def _parse(input_data: str):
-    files = []
-    spaces = []
     file_id = 0
+    result = collections.deque()
     for n, c in enumerate(input_data):
         if is_even(n):
-            files.append((int(c), file_id))
+            result.append(Section(int(c), SectionType.FILE, file_id))
             file_id += 1
         else:
-            spaces.append((int(c)))
-    return files, spaces
+            result.append(Section(int(c), SectionType.SPACE))
+    return result
 
 
 def _part1(parsed_input) -> int:
-    files, spaces = parsed_input
+    partition = copy.deepcopy(parsed_input)
+    write_index = (
+        1  # The first entry is defined to be a file, so we can start at index 1
+    )
+    read_index = len(partition) - 1
 
-    file_map = [files[0]]
-    files = files[1:]  # we always start with a file, so can move that one directly
+    while read_index > write_index:
+        if partition[read_index].type == SectionType.SPACE:
+            partition.pop()
+            read_index -= 1
 
-    while files:
-        available_size = spaces[0]
-        required_size = files[-1][0]
-        file_id = files[-1][1]
+        available_size = partition[write_index].size
+        required_size = partition[read_index].size
 
         size = min(available_size, required_size)
         available_size -= size
         required_size -= size
-        file_map.append((size, file_id))
 
         if available_size == 0:
-            file_map.append(files[0])
-            spaces = spaces[1:]
-            files = files[1:]
+            # We completely fill the available space
+            partition[write_index] = Section(
+                size, SectionType.FILE, partition[read_index].file_id
+            )
+            write_index += 2
         else:
-            spaces[0] = available_size
+            # We partially fill the available space
+            partition.insert(
+                write_index,
+                Section(size, SectionType.FILE, partition[read_index].file_id),
+            )
+            write_index += 1
+            partition[write_index].size = available_size
 
         if required_size == 0:
-            files = files[:-1]
+            # The last file is completely moved
+            partition.pop()
+            read_index -= 1
         else:
-            try:
-                files[-1] = (required_size, file_id)
-            except IndexError:
-                file_map[-1] = (required_size, file_id)
+            # The last file is partially moved
+            partition[read_index].size = required_size
 
     result = 0
     offset = 0
-    for size, file_id in file_map:
-        for i in range(size):
-            result += (offset + i) * file_id
-        offset += size
+    for section in partition:
+        if section.type == SectionType.FILE:
+            for i in range(section.size):
+                result += (offset + i) * section.file_id
+        offset += section.size
 
     return result
 
 
 def _part2(parsed_input) -> int:
-    pprint.pprint(parsed_input)
+    """TODO: improve as list manipulation is likely slow"""
+    partition = list(parsed_input)
+    write_index = (
+        1  # The first entry is defined to be a file, so we can start at index 1
+    )
+    read_index = len(partition) - 1
 
-    return 0
+    while read_index > 1:
+        if write_index > read_index:
+            write_index = 1
+            read_index -= 1
+
+        # pprint.pprint(f"{write_index=}, {read_index=}")
+        # pprint.pprint("".join([str(s) for s in partition]))
+
+        if partition[read_index].type == SectionType.SPACE:
+            read_index -= 1
+            continue
+
+        if partition[write_index].type == SectionType.FILE:
+            write_index += 1
+            continue
+
+        available_size = partition[write_index].size
+        required_size = partition[read_index].size
+
+        if available_size >= required_size:
+            partition.insert(
+                write_index,
+                Section(
+                    partition[read_index].size,
+                    SectionType.FILE,
+                    partition[read_index].file_id,
+                ),
+            )
+            write_index += 1
+            partition[write_index].size = available_size - required_size
+            write_index = 1
+
+            read_index += 1  # to compensate for the insertion
+            partition[read_index] = Section(required_size, SectionType.SPACE)
+            # read_index -= 2
+
+            # partition.pop()
+        else:
+            # read_index -= 1
+            write_index += 1
+
+    # pprint.pprint("".join([str(s) for s in partition]))
+
+    result = 0
+    offset = 0
+    for section in partition:
+        if section.type == SectionType.FILE:
+            for i in range(section.size):
+                result += (offset + i) * section.file_id
+        offset += section.size
+
+    return result
 
 
 def solve(input_data: str) -> tuple[int, int]:
