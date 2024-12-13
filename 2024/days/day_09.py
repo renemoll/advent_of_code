@@ -100,7 +100,10 @@ def _part1(parsed_input) -> int:
 
 
 def _part2(parsed_input) -> int:
-    """TODO: improve as list manipulation is likely slow"""
+    """TODO: improve as list manipulation is likely slow
+    Idea: next to the partition map, keep track of the spaces/files by [partition idx] = space => sort and fill?
+    TODO: how to avoid additional insertions?
+    """
     partition = list(parsed_input)
     write_index = (
         1  # The first entry is defined to be a file, so we can start at index 1
