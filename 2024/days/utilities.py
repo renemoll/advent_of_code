@@ -119,9 +119,12 @@ class Grid:
             yield Coordinate(i // self.columns, i % self.columns)
 
     def neighbours(
-        self, coordinate: Coordinate
+        self, coordinate: Coordinate, include_diagonals=True
     ) -> typing.Generator[Coordinate, None, None]:
-        deltas = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        deltas = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        if include_diagonals:
+            deltas += [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+
         for delta in deltas:
             x = coordinate.x + delta[0]
             y = coordinate.y + delta[1]
