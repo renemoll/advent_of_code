@@ -13,6 +13,10 @@ def diff(xs: list) -> list:
     return [b - a for a, b in itertools.pairwise(xs)]
 
 
+def is_even(n: int) -> bool:
+    return n % 2 == 0
+
+
 def list_1d_to_2d(data, columns):
     return [data[i : i + columns] for i in range(0, len(data), columns)]
 

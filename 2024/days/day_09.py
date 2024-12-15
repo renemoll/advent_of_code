@@ -5,9 +5,7 @@ import typing
 import collections
 import copy
 
-
-def is_even(n):
-    return n % 2 == 0
+from .utilities import is_even
 
 
 class SectionType(enum.Enum):
