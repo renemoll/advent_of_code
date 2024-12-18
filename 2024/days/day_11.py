@@ -7,23 +7,23 @@ from .utilities import parse_ints, is_even
 
 def blink(stones: list[int], blinks: int) -> int:
     for _ in range(blinks):
-        new_stones = collections.deque()
-        for i, number in enumerate(stones):
+        new_counter = collections.Counter()
+        for number, occurrences in stones.items():
             if number == 0:
-                new_stones.append(1)
+                new_counter[1] += occurrences
             elif is_even(len(str(number))):
                 l = len(str(number)) // 2
-                new_stones.append(int(str(number)[:l]))
-                new_stones.append(int(str(number)[l:]))
+                new_counter[int(str(number)[:l])] += occurrences
+                new_counter[int(str(number)[l:])] += occurrences
             else:
-                new_stones.append(stones[i] * 2024)
-        stones = new_stones
+                new_counter[number * 2024] = occurrences
+        stones = new_counter
 
-    return len(stones)
+    return stones.total()
 
 
 def _parse(input_data: str):
-    return collections.deque(parse_ints(input_data))
+    return collections.Counter(parse_ints(input_data))
 
 
 def _part1(parsed_input) -> int:
