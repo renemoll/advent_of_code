@@ -137,6 +137,11 @@ class Grid:
             else:
                 continue
 
+    # def all_coordinates(self) -> typing.Generator[Coordinate, None, None]:
+    #     for r in range(self.rows):
+    #         for c in range(self.columns):
+    #             yield Coordinate(r, c)
+
 
 class SparseGrid:
     """A spare grid representation, only storing specific values and their coordinates."""
@@ -154,6 +159,14 @@ class SparseGrid:
     def __iter__(self):
         return iter(self._data)
 
+    def __len__(self) -> int:
+        return len(self._data)
+
+    def pop_front(self):
+        c = list(self._data)[0]
+        v = self._data.pop(c)
+        return (c, v)
+
     def keys(self):
         return set(self._data.keys())
 
@@ -170,3 +183,31 @@ class SparseGrid:
         for c, value in self._data.items():
             if value == needle:
                 yield c
+
+    def front(self):
+        c = list(self._data)[0]
+        v = self._data[c]
+        return (c, v)
+
+    def get(self, coordinate: Coordinate):
+        return self._data[coordinate]
+
+    def neighbours(
+        self, coordinate: Coordinate, include_diagonals=True
+    ) -> typing.Generator[Coordinate, None, None]:
+        deltas = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        if include_diagonals:
+            deltas += [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+
+        for delta in deltas:
+            x = coordinate.x + delta[0]
+            y = coordinate.y + delta[1]
+            c = Coordinate(x, y)
+            if 0 <= x < self.rows and 0 <= y < self.columns and c in self.keys():
+                yield c
+            else:
+                continue
+
+    def remove(self, coordinate: Coordinate):
+        if coordinate in self.keys():
+            self._data.pop(coordinate)
