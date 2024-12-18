@@ -1,5 +1,6 @@
-"""AoC 2023"""
+"""AoC 2024"""
 
+import argparse
 import contextlib
 import logging
 import pkgutil
@@ -67,6 +68,12 @@ if __name__ == "__main__":
         datefmt="%Y.%m.%d %H:%M:%S",
     )
 
+    parser = argparse.ArgumentParser(prog="AoC 2024", description="AoC 2024")
+    parser.add_argument("-d", "--day", type=int, required=False)
+
+    args = parser.parse_args()
+    specific_day = args.day
+
     tasks_path = pathlib.Path(__file__).parent.resolve() / "days"
     modules = [name for _, name, _ in pkgutil.iter_modules([str(tasks_path)])]
     logging.debug("Found the following modules: %s", modules)
@@ -74,6 +81,9 @@ if __name__ == "__main__":
     for day in modules:
         try:
             day_number = int(day.split("_")[1])
+            if specific_day is not None and specific_day != day_number:
+                continue
+
             data = get_data(day=day_number, year=2024)
 
             module = importlib.import_module(f"days.{day}")
