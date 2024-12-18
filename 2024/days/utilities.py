@@ -30,6 +30,15 @@ def parse_ints(text: str) -> list[int]:
     return list(map(int, re.findall(r"-?\d+", text)))
 
 
+def take_n(data: list, n: int) -> typing.Generator[list, None, None]:
+    for i in range(0, len(data), n):
+        yield data[i : i + n]
+
+
+def transpose_2d_list(l):
+    return list(map(list, zip(*l)))
+
+
 class Coordinate:
     """Represent a single point within a 2D space."""
 
