@@ -98,6 +98,8 @@ class Grid:
         if isinstance(data[0], str):
             self._data = [list(x) for x in data]
         self._data = list(itertools.chain.from_iterable(data))
+        self._stride = len(data[0])
+
         self.rows = len(data)
         self.columns = len(data[0])
 
@@ -113,23 +115,23 @@ class Grid:
         )
 
     def set(self, coordinate: Coordinate, value) -> None:
-        index = coordinate.x * self.columns + coordinate.y
+        index = coordinate.x + self._stride * coordinate.y
         self._data[index] = value
 
     def get(self, coordinate: Coordinate):
-        index = coordinate.x * self.columns + coordinate.y
+        index = coordinate.x + self._stride * coordinate.y
         return self._data[index]
 
     def find(self, needle) -> Coordinate:
         index = self._data.index(needle)
-        x = index // self.columns
-        y = index % self.columns
+        x = index % self._stride
+        y = index // self._stride
         return Coordinate(x, y)
 
     def find_all(self, needle) -> typing.Generator["Coordinate", None, None]:
         indices = [i for i, x in enumerate(self._data) if x == needle]
         for i in indices:
-            yield Coordinate(i // self.columns, i % self.columns)
+            yield Coordinate(i % self._stride, i // self._stride)
 
     def neighbours(
         self, coordinate: Coordinate, include_diagonals=True
