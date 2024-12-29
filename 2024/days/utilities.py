@@ -157,15 +157,17 @@ class Grid:
 class SparseGrid:
     """A spare grid representation, only storing specific values and their coordinates."""
 
-    def __init__(self, data, predicate=lambda x: True):
+    def __init__(self, data=None, predicate=lambda x: True):
         """TODO: datatype of self._data"""
         self._data = {}
-        for r, row in enumerate(data):
-            for c, ch in enumerate(row):
-                if predicate(ch):
-                    self._data[Coordinate(c, r)] = ch
-        self.rows = len(data)
-        self.columns = len(data[0])
+
+        if not data is None:
+            for r, row in enumerate(data):
+                for c, ch in enumerate(row):
+                    if predicate(ch):
+                        self._data[Coordinate(c, r)] = ch
+            self.rows = len(data)
+            self.columns = len(data[0])
 
     def __iter__(self):
         return iter(self._data)
@@ -202,6 +204,9 @@ class SparseGrid:
 
     def get(self, coordinate: Coordinate):
         return self._data[coordinate]
+
+    def set(self, coordinate: Coordinate, value):
+        self._data[coordinate] = value
 
     def neighbours(
         self, coordinate: Coordinate, include_diagonals=True

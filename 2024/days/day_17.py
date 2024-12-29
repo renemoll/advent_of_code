@@ -90,6 +90,13 @@ class Processor:
             self.ip = self.ip + 1 if jump is None else jump
         return self.output
 
+    def reset(self):
+        self.registers["A"] = 0
+        self.registers["B"] = 0
+        self.registers["C"] = 0
+        self.ip = 0
+        self.output = []
+
 
 def _parse(input_data: str):
     sections = input_data.split("\n\n")
@@ -99,17 +106,18 @@ def _parse(input_data: str):
     for op, arg in take_n(parse_ints(sections[1]), 2):
         instructions.append(Instruction(Opcode(op), arg))
 
-    return Processor(instructions, registers)
+    return Processor(instructions, registers), parse_ints(sections[1])
 
 
 def _part1(parsed_input: Processor) -> int:
-    pc = parsed_input
+    pc, _ = parsed_input
     return ",".join(str(x) for x in pc.run())
 
 
 def _part2(parsed_input) -> int:
-    _ = parsed_input
-    return 0
+    pc, _ = parsed_input
+
+    return pc.ip
 
 
 def solve(input_data: str) -> tuple[int, int]:

@@ -16,3 +16,7 @@ Run a specific puzzle with example input:
 ```bash
 python3 -m 2023.days.day_1
 ```
+
+# Todo
+
+- check run against expected outcome when available.
