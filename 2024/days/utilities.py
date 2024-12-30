@@ -153,6 +153,11 @@ class Grid:
     #         for c in range(self.columns):
     #             yield Coordinate(r, c)
 
+    @staticmethod
+    def distance(p1: Coordinate, p2: Coordinate) -> int:
+        """L1 (Manhattan) distance"""
+        return abs(p1.x - p2.x) + abs(p1.y - p2.y)
+
 
 class SparseGrid:
     """A spare grid representation, only storing specific values and their coordinates."""

@@ -4,7 +4,8 @@ import heapq
 import math
 import collections
 
-from .utilities import Grid
+
+from .utilities import Grid, Coordinate
 
 
 def _parse(input_data: str):
@@ -114,7 +115,23 @@ def _part2(parsed_input) -> int:
     path = generate_path(previous, start, end)
     path.reverse()
 
-    return 0
+    radius = 20
+    count = collections.Counter()
+    for node in path:
+        points_in_range = [
+            Coordinate(node.x + dx, node.y + dy)
+            for dx in range(-radius, radius + 1)
+            for dy in range(-(radius - abs(dx)), radius - abs(dx) + 1)
+            if Coordinate(node.x + dx, node.y + dy) in path
+        ]
+        for p in points_in_range:
+            time_saved = cheat_path(path, node, p)
+            time_saved += 2
+            time_saved -= Grid.distance(node, p)
+            if time_saved >= 100:
+                count[time_saved] += 1
+
+    return count.total()
 
 
 def solve(input_data: str) -> tuple[int, int]:
