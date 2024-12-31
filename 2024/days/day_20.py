@@ -5,7 +5,7 @@ import math
 import collections
 
 
-from .utilities import Grid, Coordinate
+from .utilities import Grid
 
 
 def _parse(input_data: str):
@@ -71,6 +71,11 @@ def cheat_path(path, jump_from, jump_to) -> int:
     return (i_start - i_end) - 2
 
 
+def distance(p1, p2) -> int:
+    """L1 (Manhattan) distance"""
+    return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+
+
 def _part1(parsed_input) -> int:
     grid, start, end = parsed_input
 
@@ -109,25 +114,34 @@ def _part1(parsed_input) -> int:
 
 
 def _part2(parsed_input) -> int:
+    """
+    For this part I hit a run-time issue, the solution does not solve within 15min on my machine.
+    Profiling indicates most time is spent on Coordinate::__eq__ and list::index
+    Options:
+    - refactor Coordinate
+    - avoid this code path
+    """
     grid, start, end = parsed_input
 
     _, previous = dijkstra(grid, start, end)
     path = generate_path(previous, start, end)
     path.reverse()
 
+    path_with_index = {(c.x, c.y): i for i, c in enumerate(path)}
+    valid_nodes = path_with_index.keys()
+
     radius = 20
     count = collections.Counter()
     for node in path:
+        n = (node.x, node.y)
         points_in_range = [
-            Coordinate(node.x + dx, node.y + dy)
+            (node.x + dx, node.y + dy)
             for dx in range(-radius, radius + 1)
             for dy in range(-(radius - abs(dx)), radius - abs(dx) + 1)
-            if Coordinate(node.x + dx, node.y + dy) in path
+            if (node.x + dx, node.y + dy) in valid_nodes
         ]
         for p in points_in_range:
-            time_saved = cheat_path(path, node, p)
-            time_saved += 2
-            time_saved -= Grid.distance(node, p)
+            time_saved = path_with_index[p] - path_with_index[n] - distance(n, p)
             if time_saved >= 100:
                 count[time_saved] += 1
 
