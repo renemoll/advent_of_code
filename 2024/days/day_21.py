@@ -1,6 +1,7 @@
 """Day 21: Keypad Conundrum"""
 
 import itertools
+import functools
 
 from .utilities import Coordinate, parse_ints
 
@@ -41,6 +42,7 @@ numeric_keypad = Keypad(["789", "456", "123", "x0A"])
 directional_keypad = Keypad(["x^A", "<v>"])
 
 
+@functools.cache
 def determine_path(start: str, destination: str, level: int, top_level: int):
     if level == 1:
         return 1
@@ -67,16 +69,24 @@ def _part1(parsed_input) -> int:
     codes = parsed_input
 
     complexity = 0
+    keypads = 4
     for code in codes:
-        movement = find_shorted_path(code, 4, 4)
+        movement = find_shorted_path(code, keypads, keypads)
         complexity += movement * parse_ints(code)[0]
 
     return complexity
 
 
 def _part2(parsed_input) -> int:
-    _ = parsed_input
-    return 0
+    codes = parsed_input
+
+    complexity = 0
+    keypads = 27
+    for code in codes:
+        movement = find_shorted_path(code, keypads, keypads)
+        complexity += movement * parse_ints(code)[0]
+
+    return complexity
 
 
 def solve(input_data: str) -> tuple[int, int]:
