@@ -30,6 +30,10 @@ def parse_ints(text: str) -> list[int]:
     return list(map(int, re.findall(r"-?\d+", text)))
 
 
+def parse_words(text: str) -> list[str]:
+    return list(re.findall(r"\w+", text))
+
+
 def take_n(data: list, n: int) -> typing.Generator[list, None, None]:
     for i in range(0, len(data), n):
         yield data[i : i + n]
