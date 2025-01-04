@@ -1,6 +1,6 @@
 """Day 22: Monkey Market"""
 
-# import pprint
+import collections
 from .utilities import parse_ints
 
 
@@ -37,9 +37,38 @@ def _part1(parsed_input) -> int:
     return result
 
 
+def price_sequence(secret, n=2000):
+    sequences = {}
+    deltas = collections.deque(maxlen=4)
+    previous_price = secret % 10
+
+    for _ in range(n):
+        secret = evolve_secret(secret)
+        price = secret % 10
+        deltas.append(price - previous_price)
+        previous_price = price
+
+        index = str(deltas)
+        if len(deltas) == 4 and index not in sequences:
+            sequences[index] = price
+    return sequences
+
+
 def _part2(parsed_input) -> int:
-    _ = parsed_input
-    return 0
+    """
+    First idea of intersection of sequences does not work as the sequence is not garuanteed to be present in all secrets
+    """
+    initial_secrets = parsed_input
+
+    bananas = collections.defaultdict(int)
+    for secret in initial_secrets:
+        sequence = price_sequence(secret)
+        for delta, price in sequence.items():
+            bananas[delta] += price
+
+    max_total = max(bananas.values())
+
+    return max_total
 
 
 def solve(input_data: str) -> tuple[int, int]:
