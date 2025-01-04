@@ -1,36 +1,31 @@
 """Day 23: LAN Party"""
 
-import pprint
 import collections
 
 from .utilities import parse_words, take_n
 
 
 def _parse(input_data: str):
-    return list(take_n(parse_words(input_data), 2))
+    networks = collections.defaultdict(set)
+    for n1, n2 in take_n(parse_words(input_data), 2):
+        networks[n1].add(n2)
+        networks[n2].add(n1)
+
+    return networks
 
 
 def _part1(parsed_input) -> int:
-    # pprint.pprint(parsed_input)
-    connections = parsed_input
-
-    networks = collections.defaultdict(set)
-    for n1, n2 in connections:
-        networks[n1].add(n2)
-        networks[n2].add(n1)
-    # pprint.pprint(networks)
+    networks = parsed_input
 
     triplets = []
     for base, options in networks.items():
         for option in options:
             intersect = networks[option] & options
-            # pprint.pprint(f"{base=}, {option=}, {intersect=}")
             if len(intersect) > 0:
                 for x in intersect:
                     y = sorted([base, option, x])
                     if y not in triplets:
                         triplets.append(y)
-    # pprint.pprint(triplets)
 
     result = 0
     for nodes in triplets:
@@ -41,35 +36,22 @@ def _part1(parsed_input) -> int:
 
 
 def _part2(parsed_input) -> int:
-    # pprint.pprint(parsed_input)
-    connections = parsed_input
+    networks = parsed_input
 
-    networks = collections.defaultdict(set)
-    for n1, n2 in connections:
-        networks[n1].add(n2)
-        networks[n2].add(n1)
-
+    counter = collections.Counter()
     for base, options in networks.items():
         for option in options:
             intersect = networks[option] & options
-            pprint.pprint(f"{base=}, {option=}, {intersect=}")
+            if len(intersect) > 1:
+                y = sorted([base, option, *intersect])
+                counter[",".join(y)] += 1
 
-    # networks = []
-    # for n1, n2 in connections:
-    #     found = False
-    #     for network in networks:
-    #         if n1 in network or n2 in network:
-    #             network.add(n1)
-    #             network.add(n2)
-    #             found = True
-    #             break
+    def length_check(key):
+        x = (len(key) + 1) // 3
+        return x * (x - 1)
 
-    #     if not found:
-    #         networks.append(set([n1, n2]))
-
-    # pprint.pprint(networks)
-
-    return 0
+    results = {k: v for k, v in counter.items() if length_check(k) == v}
+    return max(results, key=results.get)
 
 
 def solve(input_data: str) -> tuple[int, int]:
