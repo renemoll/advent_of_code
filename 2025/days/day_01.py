@@ -1,6 +1,5 @@
 """Day 1: Secret Entrance"""
 
-from collections.abc import Iterator
 import math
 
 
@@ -12,36 +11,42 @@ def _parse(input_data: str):
     return rotations
 
 
-def range_limited_sum(data: list[int]) -> Iterator[int]:
-    """Yields the cumulative sum of data, wrapped around at 100."""
-    maximum = 100
-    result = 50
+def circular_sum(data: list[int], initial: int, maximum: int) -> int:
+    """Returns the number of times the sum ends up at 0."""
+    result = 0
+    position = initial
     for x in data:
-        result = (result + x) % maximum
-        yield result
+        position = (position + x) % maximum
+        result += 1 if position == 0 else 0
+    return result
 
 
 def _part1(parsed_input) -> int:
-    rotation = range_limited_sum(parsed_input)
-    return sum(map(lambda x: 1 if x == 0 else 0, rotation))
+    return circular_sum(parsed_input, initial=50, maximum=100)
 
 
-def range_limited_sum_with_crossings(data: list[int]) -> Iterator[int]:
-    """Yields the number of times 0 is crossed for each rotation in data."""
-    maximum = 100
-    result = 50
+def count_zero_crossings(data: list[int], initial: int, maximum: int) -> int:
+    """Returns the number of times 0 is crossed for each rotation in data."""
+    result = 0
+    position = initial
     for x in data:
-        crossings = 0
-        for _ in range(abs(x)):
-            s = math.copysign(1, x)
-            result = (result + s) % maximum
-            crossings += 1 if result == 0 else 0
-        yield crossings
+        full_rotations = abs(x) // maximum
+        partial_rotation = math.fmod(x, maximum)
+
+        result += full_rotations
+
+        # Note: using math.fmod to get (my) expected behavior with negatives :)
+        next_position = position + partial_rotation
+        if next_position >= maximum or (position > 0 and next_position <= 0):
+            result += 1
+
+        position = next_position % maximum
+
+    return result
 
 
 def _part2(parsed_input) -> int:
-    rotation = range_limited_sum_with_crossings(parsed_input)
-    return sum(rotation)
+    return count_zero_crossings(parsed_input, initial=50, maximum=100)
 
 
 def solve(input_data: str) -> tuple[int, int]:
