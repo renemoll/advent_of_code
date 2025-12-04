@@ -78,15 +78,18 @@ if __name__ == "__main__":
     modules = [name for _, name, _ in pkgutil.iter_modules([str(tasks_path)])]
     logging.debug("Found the following modules: %s", modules)
 
-    for day in modules:
+    for day_module in modules:
         try:
-            day_number = int(day.split("_")[1])
+            if "naive" in day_module:
+                continue
+
+            day_number = int(day_module.split("_")[1])
             if specific_day is not None and specific_day != day_number:
                 continue
 
             data = get_data(day=day_number, year=2025)
 
-            module = importlib.import_module(f"days.{day}")
+            module = importlib.import_module(f"days.{day_module}")
             with ExecutionTimer() as timer:
                 solution = module.solve(data)
             print(

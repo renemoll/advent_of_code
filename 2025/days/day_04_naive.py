@@ -8,35 +8,21 @@ Part 1:
 Part 2:
     For part 2 we actually need to remove rolls that have less than 4 adjacent rolls until no more rolls can be removed.
     This means we can loop over the grid a few times, using the same logic as in part 1. This will be slow....
-
-Improvements:
-    Some alternative solutions are:
-    * Perform a convolution over the grid with a 3x3 kernel to count the adjacent rolls in one go.
-      I doubt this will be faster, as you still need to loop over the entire grid multiple times and access all available neighbours.
-
-    * Store the number of adjacent rolls for each roll and update it as rolls are removed.
-      While it adds some additional administration, it reduces the times determining the number of neighbours.
-
-    * Instead of checking all rolls in each iteration, we could keep track of rolls that were adjacent to removed rolls and only check those in the next iteration.
-      This should reduce the number of rolls to look up in each iteration.
 """
 
 from .utilities import SparseGrid
 
 
 def _parse(input_data: str):
-    grid = SparseGrid("".join(input_data).splitlines(), predicate=lambda x: x == "@")
-    for roll in grid:
-        grid[roll] = len(list(grid.neighbours(roll)))
-    return grid
+    return SparseGrid("".join(input_data).splitlines(), predicate=lambda x: x == "@")
 
 
-def _part1(grid: SparseGrid) -> int:
+def _part1(grid) -> int:
     max_rolls = 4
     result = 0
 
     for roll in grid:
-        adjacent_rolls = grid[roll]
+        adjacent_rolls = len(list(grid.neighbours(roll)))
         if adjacent_rolls < max_rolls:
             result += 1
     return result
@@ -46,30 +32,19 @@ def _part2(grid) -> int:
     max_rolls = 4
     result = 0
 
-    candidates = grid.keys()
-    to_be_removed = set()
-
     while True:
-        for roll in candidates:
-            adjacent_rolls = grid[roll]
+        to_be_removed = []
+        for roll in grid:
+            adjacent_rolls = len(list(grid.neighbours(roll)))
             if adjacent_rolls < max_rolls:
-                to_be_removed.add(roll)
+                to_be_removed.append(roll)
 
+        result += len(to_be_removed)
         if not to_be_removed:
             break
 
-        result += len(to_be_removed)
-
-        candidates = set()
         for roll in to_be_removed:
-            for neighbour in grid.neighbours(roll):
-                candidates.add(neighbour)
-                grid[neighbour] -= 1
-
             grid.remove(roll)
-            candidates.discard(roll)
-
-        to_be_removed = set()
 
     return result
 
