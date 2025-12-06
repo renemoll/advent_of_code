@@ -8,6 +8,32 @@ def list_1d_to_2d(data, columns):
     return [data[i : i + columns] for i in range(0, len(data), columns)]
 
 
+def merge_overlapping_ranges(ranges: list[range]) -> list[range]:
+    """Merge overlapping ranges into non-overlapping ranges.
+
+    Args:
+        ranges (list[range]): List of ranges to merge.
+
+    Returns:
+        list[range]: Merged list of non-overlapping ranges.
+    """
+    if not ranges:
+        return []
+
+    # Sort ranges by start value
+    ranges.sort(key=lambda r: r.start)
+
+    merged_ranges = []
+    for r in ranges:
+        if not merged_ranges or r.start > merged_ranges[-1].stop:
+            merged_ranges.append(r)
+        else:
+            merged_ranges[-1] = range(
+                merged_ranges[-1].start, max(merged_ranges[-1].stop, r.stop)
+            )
+    return merged_ranges
+
+
 class Coordinate:
     """Represent a single point within a 2D space."""
 
