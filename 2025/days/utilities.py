@@ -8,6 +8,10 @@ def list_1d_to_2d(data, columns):
     return [data[i : i + columns] for i in range(0, len(data), columns)]
 
 
+def transpose_2d_list(l):
+    return list(map(list, zip(*l)))
+
+
 def merge_overlapping_ranges(ranges: list[range]) -> list[range]:
     """Merge overlapping ranges into non-overlapping ranges.
 
