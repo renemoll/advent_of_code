@@ -1,4 +1,13 @@
-"""Day 6: Trash Compactor"""
+"""Day 6: Trash Compactor
+
+Part 1:
+    We need to do some calculations on columns of data given an operator at the end.
+
+    An easy solution is to transpose the data, then process each row accordingly.
+
+Part 2:
+
+"""
 
 import functools
 import operator
@@ -25,25 +34,36 @@ def _part1(input_data) -> int:
 
 
 def _part2(input_data) -> int:
-    n = 4  # note: this only works for the example...
-    parsed_input = transpose_2d_list(
-        [
-            [line[i : i + n - 1] for i in range(0, len(line), n)]
-            for line in input_data.splitlines()
-        ]
-    )
+    lines = input_data.splitlines()
+
+    # Extract the numbers into individual digits (reserved), each row representing a number
+    numbers = lines[:-1]
+    digit_lines = transpose_2d_list([line[::-1] for line in numbers])
+    # And then merging the digits back into numbers
+    values = ["".join(line).strip() for line in digit_lines]
+
+    operations = lines[-1][::-1].split()
+
+    def slice_by_empty_string(values):
+        result = []
+        for value in values:
+            if len(value) > 0:
+                result.append(int(value))
+            else:
+                yield result
+                result = []
+
+        yield result
+
     result = 0
-    for line in parsed_input:
-        op = line[-1].strip()
-        cols = line[0:-1]
-        values = ["".join(x) for x in zip(*cols)]
+    for sliced_values in slice_by_empty_string(values):
+        op = operations.pop(0)
         match op:
             case "*":
-                values = [int(v) if v.strip() != "" else 1 for v in values]
-                result += functools.reduce(operator.mul, values, 1)
+                result += functools.reduce(operator.mul, sliced_values, 1)
             case "+":
-                values = [int(v) if v.strip() != "" else 0 for v in values]
-                result += sum(values)
+                result += sum(sliced_values)
+
     return result
 
 

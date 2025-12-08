@@ -113,6 +113,14 @@ class Grid:
             " ".join(map(str, row)) for row in list_1d_to_2d(self._data, self.columns)
         )
 
+    def __getitem__(self, coordinate: Coordinate):
+        index = coordinate.x + self._stride * coordinate.y
+        return self._data[index]
+
+    def __setitem__(self, coordinate: Coordinate, value):
+        index = coordinate.x + self._stride * coordinate.y
+        self._data[index] = value
+
     def set(self, coordinate: Coordinate, value) -> None:
         index = coordinate.x + self._stride * coordinate.y
         self._data[index] = value
@@ -160,6 +168,15 @@ class Grid:
     def transform(self, func) -> "Grid":
         data = [func(x) for x in self._data]
         return Grid(list_1d_to_2d(data, self.columns))
+
+    def row(self, row_index: int) -> list:
+        start = row_index * self._stride
+        end = start + self._stride
+        return self._data[start:end]
+
+    # def rows(self) -> typing.Generator[list, None, None]:
+    #     for r in range(self.rows):
+    #         yield self.row(r)
 
 
 class SparseGrid:
