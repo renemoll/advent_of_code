@@ -1,0 +1,26 @@
+[project]
+name = "advent-of-code"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "advent-of-code-data>=2.1.0",
+    "aoc-2025-py",
+    "utilities-py",
+]
+
+[tool.uv.sources]
+aoc-2025-py = { workspace = true }
+utilities-py = { workspace = true }
+
+[tool.uv.workspace]
+members = [
+    "utilities_py",
+    "2025_py",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.0",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+]

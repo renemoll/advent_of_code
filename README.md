@@ -1,21 +1,35 @@
+# Advent of Code
 
+## Results
 
-# Setup
+|  Year  | Language | Solved | Notes               |
+|--------|----------|--------|---------------------|
+|  2025  | Python   | 11/12  | Missing 11 part 2   |
 
-1. Set the AoC session id: [How to get the session cookie](https://github.com/wimglenn/advent-of-code-wim/issues/1)
+## Development
 
+### Python
 
-# Run
+**Setup**
 
-Run all puzzles:
+The Python projects uses [Advent of Code Data](https://pypi.org/project/advent-of-code-data/) to automatically retrieve
+puzzle examples and input data. It does require to setup your session id: Set the AoC session id: [How to get the session
+ cookie](https://github.com/wimglenn/advent-of-code-wim/issues/1)
+
+**Test a single day**
+
+Python:
 ```bash
-python3 2023/run.py
+uv run aoc-2025-py --day 01
 ```
 
-Run a specific puzzle with example input:
+**Run all days**
+
+Python:
 ```bash
-python3 -m 2023.days.day_1
+uv run aoc-2025-py
 ```
+
 
 # Todo
 
