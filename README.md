@@ -16,16 +16,16 @@ The Python projects uses [Advent of Code Data](https://pypi.org/project/advent-o
 puzzle examples and input data. It does require to setup your session id: Set the AoC session id: [How to get the session
  cookie](https://github.com/wimglenn/advent-of-code-wim/issues/1)
 
-**Test a single day**
+***Execution**
 
-Python:
+Test a single day:
+
 ```bash
 uv run aoc-2025-py --day 01
 ```
 
-**Run all days**
+Run all days:
 
-Python:
 ```bash
 uv run aoc-2025-py
 ```
@@ -33,4 +33,5 @@ uv run aoc-2025-py
 
 # Todo
 
+- example code
 - check run against expected outcome when available.

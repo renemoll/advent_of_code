@@ -1,0 +1,19 @@
+[project]
+name = "aoc-2025-py"
+version = "0.1.0"
+description = "Advent of Code 2025 in Python"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "z3-solver>=4.15.4.0",
+]
+
+[project.scripts]
+aoc-2025-py = "aoc_2025_py:main"
+
+[build-system]
+requires = ["uv_build>=0.9.17,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = []
