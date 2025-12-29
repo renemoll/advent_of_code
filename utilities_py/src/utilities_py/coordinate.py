@@ -3,6 +3,8 @@
 import itertools
 import typing
 
+from .matrix import list_1d_to_2d
+
 
 class Coordinate:
     """Represent a single point within a 2D space.
@@ -120,13 +122,13 @@ class Grid(typing.Generic[T]):
     # def __iter__(self):
     #     return iter(self._data)
 
-    # def __repr__(self) -> str:
-    #     return f"<Matrix rows: {self.rows}, columns: {self.columns}>"
+    def __repr__(self) -> str:
+        return f"<Grid rows: {self._rows}, columns: {self._columns}>"
 
-    # def __str__(self) -> str:
-    #     return "\n".join(
-    #         " ".join(map(str, row)) for row in list_1d_to_2d(self._data, self.columns)
-    #     )
+    def __str__(self) -> str:
+        return "\n".join(
+            "".join(map(str, row)) for row in list_1d_to_2d(self._data, self._columns)
+        )
 
     def __getitem__(self, coordinate: Coordinate) -> T:
         index = coordinate.x + self._stride * coordinate.y
@@ -191,7 +193,14 @@ class Grid(typing.Generic[T]):
     #     return Grid(list_1d_to_2d(data, self.columns))
 
     def row(self, row_index: int) -> typing.List[T]:
-        """TODO: remove"""
+        """Return a specific row from the grid as a list.
+
+        Args:
+            row_index (int): The index of the row to retrieve.
+
+        Returns:
+                typing.List[T]: The specified row as a list.
+        """
         start = row_index * self._stride
         end = start + self._stride
         return self._data[start:end]

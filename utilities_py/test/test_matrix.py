@@ -123,21 +123,24 @@ def test_matrix_elimination():
             [2, 1, -1, 8],
             [-3, -1, 2, -11],
             [-2, 1, 2, -3],
-        ]
+        ],
+        augmented_matrix_columns=1,
     )
 
-    # TODO?
-    # augmented_matrix_2 = Matrix(
-    #     [
-    #         [3,  2, -4,  3],
-    #         [2,  3,  3, 15],
-    #         [5, -3,  1, 14]
-    #     ]
-    # )
+    matrix_free_variables = Matrix(
+        [
+            [0, 3, -6, 6, 4, -5],
+            [3, -7, 8, -5, 8, 9],
+            [3, -9, 12, -9, 6, 15],
+        ],
+        augmented_matrix_columns=1,
+    )
 
     # 2. Execute
-    matrix.gaussian_elimination()
-    augmented_matrix.gaussian_elimination()
+    result1 = matrix.gaussian_elimination()
+    result2 = augmented_matrix.gaussian_elimination()
+    result3 = matrix_free_variables.gaussian_elimination()
+    matrix_free_variables.transform(int)
 
     # 3. Verify
     assert matrix == Matrix(
@@ -147,6 +150,10 @@ def test_matrix_elimination():
             [0.0, 0.0, 0.0],
         ]
     )
+    assert result1 is Matrix.Solution.NO_SOLUTION
+    assert matrix.pivot_variables() == [0, 1]
+    assert matrix.free_variables() == [2]
+
     assert augmented_matrix == Matrix(
         [
             [1.0, 0.0, 0.0, 2.0],
@@ -154,6 +161,20 @@ def test_matrix_elimination():
             [0.0, 0.0, 1.0, -1.0],
         ]
     )
+    assert result2 is Matrix.Solution.UNIQUE_SOLUTION
+    assert augmented_matrix.pivot_variables() == [0, 1, 2]
+    assert augmented_matrix.free_variables() == []
+
+    assert matrix_free_variables == Matrix(
+        [
+            [1, 0, -2, 3, 0, -24],
+            [0, 1, -2, 2, 0, -7],
+            [0, 0, 0, 0, 1, 4],
+        ]
+    )
+    assert result3 is Matrix.Solution.INFINITE_SOLUTIONS
+    assert matrix_free_variables.pivot_variables() == [0, 1, 4]
+    assert matrix_free_variables.free_variables() == [2, 3]
 
 
 def test_matrix_transform():

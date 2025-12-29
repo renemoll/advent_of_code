@@ -88,12 +88,13 @@ def aoc_runner(project_path: pathlib.Path, year: int):
     for module in modules:
         try:
             if specific_day is not None:
-                if not run_variants and module != f"day_{specific_day:02d}":
-                    continue
-                elif run_variants and not module.startswith(f"day_{specific_day:02d}"):
+                if run_variants and not module.startswith(f"day_{specific_day:02d}"):
                     continue
 
             day_number = int(module.split("_")[1])
+            if not run_variants and module != f"day_{day_number:02d}":
+                continue
+
             module = importlib.import_module(f".{module}", f"aoc_{year}_py")
 
             if use_example:

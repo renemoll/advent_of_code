@@ -2,6 +2,7 @@
 
 import itertools
 from collections.abc import Callable, Generator
+import enum
 import typing
 
 T = typing.TypeVar("T")
@@ -43,16 +44,32 @@ def transpose_2d_list(
 class Matrix(typing.Generic[T]):
     """A 2D matrix.
 
+    Args:
+        data (typing.Sequence[typing.Sequence[T]]): The initial data for the matrix.
+        augmented_matrix_columns (int): Number of columns that are part of the augmented matrix (right-hand side).
+
     Improvements:
     * factory functions to create the matrix (from string, from custom type)
     """
 
-    def __init__(self, data: typing.Sequence[typing.Sequence[T]]) -> None:
+    class Solution(enum.Enum):
+        NO_SOLUTION = 0
+        UNIQUE_SOLUTION = 1
+        INFINITE_SOLUTIONS = 2
+
+    __slots__ = ("_data", "_stride", "_rows", "_columns", "_augmented_matrix_columns")
+
+    def __init__(
+        self,
+        data: typing.Sequence[typing.Sequence[T]],
+        augmented_matrix_columns: int = 0,
+    ) -> None:
         self._data = list(itertools.chain.from_iterable(data))
         self._stride = len(data[0])
 
         self._rows = len(data)
         self._columns = self._stride
+        self._augmented_matrix_columns = augmented_matrix_columns
 
     def __eq__(self, other: typing.Self) -> bool:
         return (
@@ -99,46 +116,143 @@ class Matrix(typing.Generic[T]):
 
         return [self._data[i * self._stride + index] for i in range(self._rows)]
 
-    def gaussian_elimination(self) -> typing.Self:
-        """Perform Gauss-Jordan elimination on the matrix in place.
+    def gaussian_elimination(self) -> Solution:
+        """Perform Gauss-Jordan (reduced row echelon form) elimination on the matrix in place.
+
+        Args:
+            augmented_matrix_columns (int): Number of columns that are part of the augmented matrix (right-hand side).
+
+        Returns:
+            Solution: An enum indicating whether the system has no solution, a unique solution, or infinite solutions.
+
+        This method modifies the current matrix to its reduced row echelon form.
+
+        Note: the resulting matrix may contain floating-point numbers due to scaling.
+        """
+
+        def swap_rows(r1: int, r2: int) -> None:
+            for c in range(self._columns):
+                self._data[r1 * self._stride + c], self._data[r2 * self._stride + c] = (
+                    self._data[r2 * self._stride + c],
+                    self._data[r1 * self._stride + c],
+                )
+
+        def scale_row(r: int, factor: float) -> None:
+            for c in range(self._columns):
+                self._data[r * self._stride + c] *= factor
+
+        def subtract_rows(r1: int, r2: int, factor: float) -> None:
+            for c in range(self._columns):
+                self._data[r1 * self._stride + c] -= (
+                    factor * self._data[r2 * self._stride + c]
+                )
+
+        pivots = 0
+        data_columns = self._columns - self._augmented_matrix_columns
+
+        # Forward elimination
+        for c in range(data_columns):
+            # Find pivot
+            pivot_row = None
+            for r in range(min(c, pivots), self._rows):
+                if self._data[r * self._stride + c] != 0:
+                    # TODO: select the row with the largest absolute value
+                    pivot_row = r
+                    break
+
+            if pivot_row is None:
+                continue  # No pivot in this column
+
+            pivot_value = self._data[pivot_row * self._stride + c]
+
+            # Swap pivot row to current row
+            if pivot_row != pivots:
+                swap_rows(pivots, pivot_row)
+
+            # Eliminate below
+            for r in range(pivots + 1, self._rows):
+                factor = self._data[r * self._stride + c] / pivot_value
+                subtract_rows(r, pivots, factor)
+
+            pivots += 1
+
+        # Next, back substitution
+        for r in range(self._rows - 1, -1, -1):
+            # Find pivot
+            pivot_col = None
+            for c in range(data_columns):
+                if self._data[r * self._stride + c] != 0:
+                    pivot_col = c
+                    break
+
+            if pivot_col is None:
+                continue  # No pivot in this column
+
+            pivot_value = self._data[r * self._stride + pivot_col]
+
+            # Scale pivot row
+            scale_row(r, 1 / pivot_value)
+
+            # Back substitution (eliminate above)
+            for r_sub in range(0, r):
+                factor = self._data[r_sub * self._stride + pivot_col]
+                subtract_rows(r_sub, r, factor)
+
+        if pivots == data_columns:
+            return Matrix.Solution.UNIQUE_SOLUTION
+        else:
+            last_row = self._rows - 1
+            last_row_data = self._data[
+                last_row * self._stride : last_row * self._stride + data_columns
+            ]
+            print(last_row_data)
+            if any([int(x) != 0 for x in last_row_data]):
+                return Matrix.Solution.INFINITE_SOLUTIONS
+
+        return Matrix.Solution.NO_SOLUTION
+
+    def pivot_variables(self) -> typing.List[int]:
+        """Identify pivot variable columns in the matrix.
 
         Args:
             None
 
         Returns:
-            typing.Self: The matrix after Gauss-Jordan elimination.
+            typing.List[int]: A list of column indices that are pivot variables.
 
-        This method modifies the matrix to its reduced row echelon form.
-
-        Beware: this is a simple implementation and does not handle all edge cases.
-        Note: the resulting matrix may contain floating-point numbers.
+        Presumes the matrix is in reduced row echelon form.
         """
 
-        for i in range(min(self._rows, self._columns)):
-            # Scale the row
-            diagonal_value = self._data[i * self._stride + i]
-            if diagonal_value == 0:
-                continue  # Cannot scale a zero row
-            for c in range(i, self._columns):
-                self._data[i * self._stride + c] /= diagonal_value
+        result = []
+        for c in range(self._columns - self._augmented_matrix_columns):
+            expected_row = len(result)
+            if expected_row >= self._rows:
+                break
 
-            # Eliminate below
-            for r in range(i + 1, self._rows):
-                factor = self._data[r * self._stride + i]
-                for c in range(i, self._columns):
-                    self._data[r * self._stride + c] -= (
-                        factor * self._data[i * self._stride + c]
-                    )
+            if self._data[expected_row * self._stride + c] == 1.0:
+                result.append(c)
+                continue
 
-            # Eliminate above
-            for j in range(i):
-                factor = self._data[j * self._stride + i]
-                for c in range(i, self._columns):
-                    self._data[j * self._stride + c] -= (
-                        factor * self._data[i * self._stride + c]
-                    )
+        return result
 
-        return self
+    def free_variables(self) -> typing.List[int]:
+        """Identify free variable columns in the matrix.
+
+        Args:
+            None
+
+        Returns:
+            typing.List[int]: A list of column indices that are free variables.
+
+        Presumes the matrix is in reduced row echelon form.
+        """
+
+        pivot_vars = set(self.pivot_variables())
+        result = []
+        for c in range(self._columns - self._augmented_matrix_columns):
+            if c not in pivot_vars:
+                result.append(c)
+        return result
 
     def transform(self, func: Callable[[int], int]) -> typing.Self:
         """Apply a function to each element in the Matrix.

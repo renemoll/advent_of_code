@@ -156,6 +156,55 @@ def test_grid_data_access():
     assert grid[Coordinate(4, 2)] == "B"
 
 
+def test_grid_row_access():
+    """Verify that the neighbours method of Grid correctly handles edge Coordinates."""
+
+    # 1. Prepare
+    grid = Grid([[0, 1, 2], [3, 4, 5], [6, 7, 8]])
+
+    # 2. Execute
+    row_0 = grid.row(0)
+    row_1 = grid.row(1)
+    row_2 = grid.row(2)
+
+    # 3. Verify
+    assert row_0 == [0, 1, 2]
+    assert row_1 == [3, 4, 5]
+    assert row_2 == [6, 7, 8]
+
+
+def test_grid_str_and_repr():
+    """Verify the string and repr representations of the Grid class."""
+
+    # 1. Prepare
+    data = """##########
+#.#......#
+#...S....#
+#.#.######"""
+    grid = Grid(data.splitlines())
+
+    # 2. Execute
+    grid_str = str(grid)
+    grid_repr = repr(grid)
+
+    # 3. Verify
+    assert grid_str == "##########\n#.#......#\n#...S....#\n#.#.######"
+    assert grid_repr == "<Grid rows: 4, columns: 10>"
+
+
+def test_grid_size():
+    """Verify that the size property of Grid returns the correct dimensions."""
+
+    # 1. Prepare
+    data = """##########
+#...A....#
+#.#.######"""
+    grid = Grid(data.splitlines())
+
+    # 2. Execute & Verify
+    assert grid.size() == (3, 10)
+
+
 def test_grid_find():
     """Verify that a value can be found in a grid, returning its Coordinate."""
 
